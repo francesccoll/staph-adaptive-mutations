@@ -1,0 +1,72 @@
+#!/bin/bash
+
+set -e
+
+pairs_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.txt";
+
+vcf_dir="/project/directory/snippy_mrca/snippy_vcfs/";
+
+vcf_dir_ref1="/project/directory/snippy_ref/snippy_vcfs/";
+
+vcf_dir_ref2="/project/directory/mapping/";
+
+
+# Change ref_suffix variable
+
+ref_suffix="nctc8325";
+ref_suffix="je2";
+ref_suffix="emrsa15";
+
+if [ "$ref_suffix" == "emrsa15" ]
+then
+	reference_genome="/project/directory/breseq/CC22_EMRSA15.fasta";
+fi
+if [ "$ref_suffix" == "je2" ]
+then
+	reference_genome="/project/directory/snippy/CC8_USA300_JE2.fasta";
+fi
+if [ "$ref_suffix" == "nctc8325" ]
+then
+	reference_genome="/project/directory/snippy/CC8_NCTC8325.fasta";
+fi
+
+
+laPairs=`awk -F'\t' '{ print $1}' $pairs_file`;
+
+for pair in $laPairs
+do
+
+echo $pair
+# 14623_5#88.14323_1#38.mrca_final.mpros-1314
+IFS='.' read -a array <<< "$pair";
+sample="${array[0]}"; ref="${array[1]}"; patient=${array[3]};
+
+vcf_mrca=$vcf_dir$pair".snippy."$ref_suffix".norm.vcf";
+vcf_ref1=$vcf_dir_ref1$sample".snippy."$ref_suffix".vcf";
+vcf_ref2=$vcf_dir_ref2"/"$ref_suffix"/"$sample"_SMALT/"$sample"_variant.norm.vcf";
+vcf_mrca_kept=$vcf_dir$pair".snippy."$ref_suffix".norm.in_ref_VCF.vcf";
+vcf_mrca_rm=$vcf_dir$pair".snippy."$ref_suffix".norm.not_in_ref_VCF.vcf";
+
+
+if [ ! -f $vcf_mrca ]
+then
+	echo $vcf_mrca" not found"
+fi
+if [ ! -f $vcf_ref1 ]
+then
+	echo $vcf_ref1" not found"
+fi
+if [ ! -f $vcf_ref2 ]
+then
+	echo $vcf_ref2" not found"
+fi
+
+if [[ -f $vcf_mrca && -f $vcf_ref1 && -f $vcf_ref2 ]]
+then
+	echo $vcf_ref
+	bsub -q normal -J $pair"_filt" -o $pair"_filt.out" -R "select[mem > 5000] rusage[mem=5000]" -M 5000 "python3 compare_mrca_vs_reference_snippy_vcfs.py -m $vcf_mrca -r1 $vcf_ref1 -r2 $vcf_ref2 -g $reference_genome -k $vcf_mrca_kept -o $vcf_mrca_rm"
+
+fi
+
+done
+

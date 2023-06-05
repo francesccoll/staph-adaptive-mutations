@@ -1,0 +1,26 @@
+
+### CC22
+
+ref="emrsa15";
+ref_file="CC22_EMRSA15";
+
+pair_ids="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.txt";
+bash step5_annotate_snippy_variants_using_snpEff.generic.mrca.farm.sh $ref $ref_file $pair_ids
+
+
+### CC8_USA300_JE2
+
+ref="je2";
+ref_file="CC8_USA300_JE2";
+
+pair_ids="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.txt";
+bash step5_annotate_snippy_variants_using_snpEff.generic.mrca.farm.sh $ref $ref_file $pair_ids
+
+
+### CC8_NCTC8325
+
+ref="nctc8325";
+ref_file="CC8_NCTC8325";
+
+pair_ids="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.txt";
+bash step5_annotate_snippy_variants_using_snpEff.generic.mrca.farm.sh $ref $ref_file $pair_ids

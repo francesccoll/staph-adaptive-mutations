@@ -1,0 +1,81 @@
+
+# This script is used to run Snippy against the reconstructed host MRCA by the identify_host_ancestral_isolate.py pipeline
+#!/bin/bash
+
+set -e
+
+dir="/project/directory/identify_ancestral/";
+phy_dir="/project/directory/phylogeny_cc/";
+samples_paths_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples_paths.txt";
+reference_dir=$dir"snippy_vcfs/";
+snippy_dir="/project/directory/snippy_mrca/";
+vcf_dir="/project/directory/snippy_mrca/snippy_vcfs/";
+pairs_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.txt";
+
+list_of_CCs_and_outgroups=$phy_dir"outgroup_per_CC.isolate_chosen.edited.csv";
+clonal_complexes=`awk -F'\t' '{ print $1}' $list_of_CCs_and_outgroups | grep -v "CC"`;
+
+if [ -f $pairs_file ]
+then
+	rm $pairs_file
+fi
+
+for clonal_complex in $clonal_complexes
+do
+
+	echo $clonal_complex
+
+	output_table=$dir"colonising_collections_"$clonal_complex".host_outgroup_reference.csv";
+
+	if [ ! -f $output_table ]
+	then
+		echo "Run script identify_host_ancestral_isolate.step1.py to generate "$output_table
+		exit 1
+	fi
+
+	patients=`awk -F'\t' '{ print $1}' $output_table | grep -v "host_id"`;
+
+	for patient in $patients
+	do
+		# Extract out-group
+		outgroup=`awk -v pt=$patient -F'\t' '{ if($1==pt) print $6}' $output_table`;
+
+		# Extract host isolates
+		host_isolates=`awk -v pt=$patient -F'\t' '{ if($1==pt) print $2}' $output_table | tr ';' '\n'`;
+
+		for isolate in $host_isolates
+		do
+			echo $clonal_complex" "$patient" "$outgroup" "$isolate
+			# Mapping fastq files of case against reference genome of control
+
+			fastq_dir=`awk -v sample="$isolate" -F'\t' '{ if($1==sample) print $2}' $samples_paths_file`;
+			fastq1=$fastq_dir"/"$isolate"_1.fastq.gz";
+			fastq2=$fastq_dir"/"$isolate"_2.fastq.gz";
+		
+			ref_file=$reference_dir$patient".mrca."$outgroup".fasta"; # e.g. young2017-P100.mrca.SRR3728603.fasta
+			pair=$isolate"."$outgroup".mrca."$patient;
+			out_dir=$snippy_dir$pair;
+			vcf_out=$vcf_dir$pair".snippy.vcf";
+
+			echo $fastq1
+			echo $fastq2
+			echo $ref_file
+
+			if [[ -f $fastq1 && -f $ref_file ]]
+			then
+				if [ ! -f $vcf_out ]
+				then
+					if [ ! -d $out_dir ]
+					then
+						echo "Running Snippy"
+						bsub -q normal -J $pair -o $pair".out" -n8 -R "span[hosts=1] select[mem > 10000] rusage[mem=10000]" -M 10000 "bash run_snippy_per_sample.farm.sh $out_dir $ref_file $fastq1 $fastq2 $vcf_out"
+						echo $pair >> $pairs_file
+					fi
+				fi
+			fi
+		done
+	done
+done
+
+
+

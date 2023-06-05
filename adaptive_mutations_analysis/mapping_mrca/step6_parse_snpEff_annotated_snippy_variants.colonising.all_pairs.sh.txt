@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -e
+
+# This bash script is used to parse the snpEff annotated VCF into a tabular table using the python script parse_snpEff_vcf.py
+
+ref="nctc8325";
+ref_file="CC8_NCTC8325";
+
+ref="je2";
+ref_file="CC8_USA300_JE2";
+
+ref="emrsa15";
+ref_file="CC22_EMRSA15";
+
+
+vcf_dir="/project/directory/snippy_mrca/snippy_vcfs/";
+pair_ids="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.txt";
+gff_file="/project/directory/snippy_mrca/"$ref_file".gff";
+
+combined_table="colonising_pairs_patient-matched_gwas_dataset.mrca.snippy_snpEff_annotated_variants."$ref".in_ref_VCF.txt";
+
+laPairs=`awk -F'\t' '{ print $1}' $pair_ids`;
+
+for pair in $laPairs
+do
+	echo $pair
+	ann_vcf=$vcf_dir$pair".snippy."$ref".norm.in_ref_VCF.snpEff_ann.vcf";
+	echo $ann_vcf
+	ann_table=$vcf_dir$pair".snippy."$ref".norm.in_ref_VCF.snpEff_ann.txt";
+
+
+	if [ -f $ann_vcf ] 
+	then
+		if [ ! -f $ann_table ] 
+		then
+			python3 parse_snpEff_vcf.py --gff_file $gff_file --gff_fields feature,start,end,strand --gff_ann_fields locus_tag,gene,product -i $ann_vcf -o $ann_table
+		fi
+
+		cat $ann_table | awk -F'\t' -v sample="$pair" '{ print sample"\t"$0}' >> $combined_table
+	fi
+done
+
+
+
+
+
+

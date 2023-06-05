@@ -1,0 +1,63 @@
+#!/bin/bash
+
+set -e
+
+# This bash script is used to filter out Snippy variants at the edge of the contigs and to lift them over to a common reference genome
+
+
+## Choose new reference
+
+ref_id="nctc8325";
+ref_id="je2";
+ref_id="emrsa15";
+
+pairs_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.txt";
+
+vcf_dir="/project/directory/snippy_mrca/snippy_vcfs/";
+
+if [ "$ref_id" == "emrsa15" ]
+then
+	ref_fasta="/project/directory/breseq/CC22_EMRSA15.fasta";
+	ref_length="2832299";
+fi
+if [ "$ref_id" == "je2" ]
+then
+	ref_fasta="/project/directory/snippy/CC8_USA300_JE2.fasta";
+	ref_length="2874399";
+fi
+if [ "$ref_id" == "nctc8325" ]
+then
+	ref_fasta="/project/directory/snippy/CC8_NCTC8325.fasta";
+	ref_length="2821361";
+fi
+
+missing_vcfs="/project/directory/snippy_mrca/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.missing_snippy_vcfs.norm.txt";
+
+laPairs=`awk -F'\t' '{ print $1}' $pairs_file`;
+
+for pair in $laPairs
+do
+
+echo $pair
+# SRR5250774.SRR5250228.mrca.young2017-P103
+IFS='.' read -a array <<< "$pair";
+sample="${array[0]}"; ref="${array[1]}"; patient=${array[3]};
+
+ref_file_fasta=$ref_dir$patient".mrca."$ref".fasta";
+map_ref=$ref_file_fasta;
+
+vcf_in=$vcf_dir$pair".snippy."$ref_id".vcf";
+vcf_out=$vcf_dir$pair".snippy."$ref_id".norm.vcf";
+
+if [ -s $vcf_in ]
+then
+	if [ ! -f $vcf_out ]
+	then		
+	 	bsub -q normal -J $pair"_norm" -o $pair"_norm.out" -R "select[mem > 5000] rusage[mem=5000]" -M 5000 "bash normalise_snippy_vcf.sh $vcf_in $vcf_out $ref_fasta $ref_id $ref_length"
+	fi
+else
+	echo "Missing VCF "$vcf_in
+	echo $vcf_in >> $missing_vcfs
+fi
+
+done

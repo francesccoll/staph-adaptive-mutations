@@ -1,0 +1,73 @@
+#!/bin/bash
+
+set -e
+
+# This bash script is used to filter out Snippy variants at the edge of the contigs and to lift them over to a common reference genome
+
+
+## Choose new reference
+
+ref_id="nctc8325";
+ref_id="je2";
+ref_id="emrsa15";
+
+pairs_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.txt";
+
+vcf_dir="/project/directory/snippy_mrca/snippy_vcfs/";
+
+ref_dir="/project/directory/identify_ancestral/snippy_vcfs/";
+
+if [ "$ref_id" == "emrsa15" ]
+then
+	new_ref="/project/directory/breseq/CC22_EMRSA15.fasta";
+fi
+if [ "$ref_id" == "je2" ]
+then
+	new_ref="/project/directory/snippy/CC8_USA300_JE2.fasta";
+fi
+if [ "$ref_id" == "nctc8325" ]
+then
+	new_ref="/project/directory/snippy/CC8_NCTC8325.fasta";
+fi
+
+missing_vcfs="/project/directory/snippy_mrca/colonising_pairs_patient-matched_gwas_dataset.all_pairs.mrca.missing_snippy_vcfs.txt";
+
+window_size1="210";
+window_size2="200";
+
+laPairs=`awk -F'\t' '{ print $1}' $pairs_file`;
+
+for pair in $laPairs
+do
+
+echo $pair
+# SRR5250774.SRR5250228.mrca.young2017-P103
+IFS='.' read -a array <<< "$pair";
+sample="${array[0]}"; ref="${array[1]}"; patient=${array[3]};
+
+# ref_file_fasta=$ref_dir$patient".mrca_final."$ref".fasta";
+ref_file_fasta=$ref_dir$patient".mrca."$ref".fasta";
+map_ref=$ref_file_fasta;
+
+vcf_in=$vcf_dir$pair".snippy.vcf";
+vcf_filt=$vcf_dir$pair".snippy.kept.vcf";
+vcf_rm=$vcf_dir$pair".snippy.rm.vcf";
+vcf_out=$vcf_dir$pair".snippy."$ref_id".vcf";
+vcf_nm_out=$vcf_dir$pair".snippy."$ref_id".not_mapped.vcf";
+
+if [ -s $vcf_in ]
+then
+	if [ ! -f $vcf_filt ]
+	then
+		bsub -q normal -J $pair"_filt" -o $pair"_filt.out" -R "select[mem > 5000] rusage[mem=5000]" -M 5000 "python3 remove_variants_at_edges_from_vcf.py -i $vcf_in -o $vcf_filt -r $vcf_rm -w $window_size1"
+	fi
+	if [ ! -f $vcf_out ]
+	then
+	 	bsub -q normal -J $pair"_lift" -o $pair"_lift.out" -R "select[mem > 5000] rusage[mem=5000]" -M 5000 "perl insert_variants.v2.pl --map_ref $map_ref --new_ref $new_ref --input_vcf $vcf_filt --output_vcf $vcf_out --not_mapped_vcf $vcf_nm_out --window_size $window_size2 --window_size_per 0.5"
+	fi
+else
+	echo "Missing VCF "$vcf_in
+	echo $vcf_in >> $missing_vcfs
+fi
+
+done
