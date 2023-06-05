@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+samples_file="/project/directory/data/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples.txt";
+assembly_dir="/project/directory/assembly/";
+
+laSamples=`awk -F'\t' '{ print $1}' $samples_file`;
+
+path="/project/directory/mlst_results/"
+
+for sample in $laSamples
+do
+
+	echo $sample
+
+	assembly=$assembly_dir$sample".spades.improved.fasta";
+
+	if [ -f $assembly ]
+	then
+		path2=$path$sample"/";
+		if [ ! -d $path2 ]
+		then
+        		echo "Contigs file found for "$sample" running get_sequence_type"
+			mkdir $path2
+			echo $assembly
+			echo $path2
+			bsub -q normal -n 1 -J $sample"_mlst" -o $sample"_mlst.out" -e $sample"_mlst.err" -R "select[mem > 2000] rusage[mem=2000]" -M 2000 get_sequence_type -s "Staphylococcus aureus" -c $assembly -o $path2
+		fi
+	fi
+done
