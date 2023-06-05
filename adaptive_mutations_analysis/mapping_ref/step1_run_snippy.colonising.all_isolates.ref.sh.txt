@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -e
+
+# This bash script is used to call variants using Snippy for all isolates against the same reference genome
+
+samples_paths_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples_paths.txt";
+snippy_dir="/project/directory/snippy_ref/";
+vcf_dir="/project/directory/snippy_ref/snippy_vcfs/";
+
+ref_file="/project/directory/snippy/CC8_NCTC8325.fasta";
+ref_file="/project/directory/snippy/CC8_USA300_JE2.fasta";
+ref_file="/project/directory/breseq/CC22_EMRSA15.fasta";
+
+ref_sufix="nctc8325";
+ref_sufix="je2";
+ref_sufix="emrsa15";
+
+laSamples=`awk -F'\t' '{ print $1}' $samples_paths_file`;
+
+for sample in $laSamples
+do
+
+echo $sample
+
+# Mapping fastq files of sample against reference genome
+
+fastq_dir=`awk -v sample="$sample" -F'\t' '{ if($1==sample) print $2}' $samples_paths_file`;
+fastq1=$fastq_dir"/"$sample"_1.fastq.gz";
+fastq2=$fastq_dir"/"$sample"_2.fastq.gz";
+out_dir=$snippy_dir$sample"_"$ref_sufix;
+vcf_out=$vcf_dir$sample".snippy."$ref_sufix".vcf";
+
+if [[ -f $fastq1 && -f $ref_file ]]
+then
+	if [ ! -f $vcf_out ]
+	then
+		if [ ! -d $out_dir ]
+		then
+			echo "Running Snippy"
+			bsub -q normal -J $sample"_"$ref_sufix -o $sample"_"$ref_sufix".out" -n8 -R "span[hosts=1] select[mem > 20000] rusage[mem=20000]" -M 20000 "bash run_snippy_per_sample.farm.sh $out_dir $ref_file $fastq1 $fastq2 $vcf_out"
+		fi
+	fi
+fi
+
+done
+
+

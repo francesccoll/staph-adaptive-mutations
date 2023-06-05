@@ -1,0 +1,29 @@
+
+### CC8
+
+ref="emrsa15";
+ref_file="CC22_EMRSA15";
+vcf_dir="/project/directory/snippy_ref/snippy_vcfs/";
+sample_ids="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples_paths.txt";
+
+bash annotate_snippy_variants_using_snpEff.generic.farm.sh $ref $ref_file $sample_ids $vcf_dir
+
+
+### CC8_USA300_JE2
+
+ref="je2";
+ref_file="CC8_USA300_JE2";
+vcf_dir="/project/directory/snippy_ref/snippy_vcfs/";
+sample_ids="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples_paths.txt";
+
+bash annotate_snippy_variants_using_snpEff.generic.farm.sh $ref $ref_file $sample_ids $vcf_dir
+
+
+### CC8_NCTC8325
+
+ref="nctc8325";
+ref_file="CC8_NCTC8325";
+vcf_dir="/project/directory/snippy_ref/snippy_vcfs/";
+sample_ids="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples_paths.txt";
+
+bash annotate_snippy_variants_using_snpEff.generic.farm.sh $ref $ref_file $sample_ids $vcf_dir
