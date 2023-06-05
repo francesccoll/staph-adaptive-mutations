@@ -1,0 +1,107 @@
+FT   misc_feature    34163..51525
+FT                   /colour=0
+FT                   /note="Staphylococcal cassette chromosome mec (SCCmec)
+FT                   type IV partial"
+FT                   /label=SCCmec
+FT   misc_feature    80765..83026
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    137322..138041
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    141474..142274
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    315945..318143
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    818385..820574
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    935317..936294
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    938088..938798
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    977393..979583
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1104852..1107038
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1252874..1254311
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1283817..1286016
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1328804..1330543
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1361018..1375548
+FT                   /colour=0
+FT                   /note="ICE element?"
+FT   misc_feature    1520143..1566314
+FT                   /colour=0
+FT                   /note="phiSLT and phi PVL like phage"
+FT   misc_feature    1567574..1569770
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1852864..1853851
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1861820..1863920
+FT                   /note="duplication"
+FT   misc_feature    1874756..1876610
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1890687..1892984
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1943176..1944547
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    1944548..1945123
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    2021753..2029411
+FT                   /colour=0
+FT                   /note="Tn552-like?"
+FT   misc_feature    2042948..2087965
+FT                   /colour=0
+FT                   /label=phiSa3
+FT                   /note="Prophage"
+FT   misc_feature    2136387..2138610
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    2509256..2510560
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    2568107..2570285
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    2700680..2701410
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    2825393..2826315
+FT                   /note="IS element"
+FT                   /colour=0
+FT   misc_feature    581228..581800
+FT                   /note="repeat region"
+FT   misc_feature    585722..586297
+FT                   /note="repeat region"
+FT   misc_feature    589680..590150
+FT                   /note="repeat region"
+FT   misc_feature    824723..825556
+FT                   /note="repeat region"
+FT   misc_feature    2098579..2099979
+FT                   /note="node 1247->1248"
+FT   misc_feature    2103705..2103914
+FT                   /note="repeat region"
+FT   misc_feature    2407746..2408446
+FT                   /note="repeat region"
+FT   misc_feature    2737370..2738209
+FT                   /note="node 1248->7521_6#50 repeat region"
+FT   misc_feature    2776273..2778047
+FT                   /note="repeat-rich region"

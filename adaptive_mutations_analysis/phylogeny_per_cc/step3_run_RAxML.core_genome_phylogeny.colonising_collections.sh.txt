@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+dir="/project/directory/phylogeny_cc/";
+cc_file=$dir"colonising_collections_list_of_CCs.txt";
+
+laCC=`awk -F'\t' '{ print $1}' $cc_file`;
+
+for cc in $laCC
+do
+	echo $cc
+
+	run_RAxML.py -a "colonising_collections_"$cc".EMRSA15.rmMGE.richardson2018_core_genome.aln" -b 100 -s -o "colonising_collections_"$cc".EMRSA15.rmMGE.richardson2018_core_genome" -q normal -n 10 -M 10 -O "run_RAxML_cc"$cc".col.core_genome.out" -E "run_RAxML_cc"$cc".col.core_genome.err"
+
+done
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+dir="/project/directory/phylogeny_cc/";
+mge="/project/directory/phylogeny_cc/CC22_EMRSA15_MGE_all.tab";
+core_genome_tab="/project/directory/phylogeny_cc/ST22_strain.HO50960412.HE681097.1.richardson2018_core_genome.one_copy.tab";
+
+cc_file=$dir"colonising_collections_list_of_CCs.txt";
+
+laCC=`awk -F'\t' '{ print $1}' $cc_file`;
+
+for cc in $laCC
+do
+	echo $cc
+	aln=$dir"colonising_collections_"$cc".EMRSA15.fa";
+	out1=$dir"colonising_collections_"$cc".EMRSA15.rmMGE.fa";
+
+	remove_blocks_from_aln.py -a $aln -o $out1 -t $mge -R
+
+	out2=$dir"colonising_collections_"$cc".EMRSA15.rmMGE.richardson2018_core_genome.aln";
+
+	remove_blocks_from_aln.py -a $out1 -o $out2 -t $core_genome_tab -k
+done
+
+
+
+
+
