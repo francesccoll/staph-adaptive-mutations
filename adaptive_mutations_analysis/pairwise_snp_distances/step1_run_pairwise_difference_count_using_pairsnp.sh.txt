@@ -1,0 +1,45 @@
+#!/bin/sh
+
+set -e
+
+# NOTE: the option -n must not be used as Ns would be counted as SNPs
+# The option -c was used to generate a comma-delimited file 
+
+dir1="/project/directory/phylogeny_cc/";
+dir2="/project/directory/pairwise_snp_distances/";
+
+cc_file=$dir1"colonising_collections_list_of_CCs.txt";
+
+laCC=`awk -F'\t' '{ print $1}' $cc_file`;
+
+for cc in $laCC
+do
+	echo $cc
+
+	align=$dir1"colonising_collections_"$cc".EMRSA15.rmMGE.richardson2018_core_genome.aln";
+	matrix=$dir2"colonising_collections_"$cc".EMRSA15.rmMGE.richardson2018_core_genome.pairwiseSNPcount.matrix.csv";
+	bsub -q normal -J pairsnp -o pairsnp.out -R "select[mem > 15000] rusage[mem=15000]" -M 15000 "pairsnp -c $align > $matrix"
+
+done
+
+# Creating pairwise SNP matrix for all isolates (across CCs)
+
+# cd $dir1
+# cat *.aln > colonising_collections_all_CCs.EMRSA15.rmMGE.richardson2018_core_genome.aln
+
+align=$dir1"colonising_collections_all_CCs.EMRSA15.rmMGE.richardson2018_core_genome.aln";
+matrix=$dir2"colonising_collections_all_CCs.EMRSA15.rmMGE.richardson2018_core_genome.pairwiseSNPcount.matrix.csv";
+bsub -q yesterday -J pairsnp -o pairsnp.out -R "select[mem > 40000] rusage[mem=40000]" -M 40000 "pairsnp -c $align > $matrix"
+
+# The alignment is removed as it is too big (13Gb) and can be easily re-created
+rm $align
+
+
+
+
+
+
+
+
+
+
