@@ -1,0 +1,52 @@
+
+# This is an additional script to copy all outgrip/reference assemblies into the same directory so that
+# step identify_host_ancestral_isolate.step4.py can be run on Mac
+
+#!/bin/bash
+
+set -e
+
+environment="farm";
+
+if [ $environment == "farm" ]
+then
+	dir="/nfs/users/nfs_f/fc4/lustre_scratch118/7.clinical_phenotype/7.patient-matched_col_inv/identify_ancestral/";
+	phy_dir="/nfs/users/nfs_f/fc4/lustre_scratch118/7.clinical_phenotype/7.patient-matched_col_inv/phylogeny_cc/";
+	psd_dir="/nfs/users/nfs_f/fc4/lustre_scratch118/7.clinical_phenotype/7.patient-matched_col_inv/pairwise_snp_distances/";
+
+fi
+
+vcf_dir=$dir"snippy_vcfs/";
+
+list_of_CCs_and_outgroups=$phy_dir"outgroup_per_CC.isolate_chosen.edited.csv";
+
+clonal_complexes=`awk -F'\t' '{ print $1}' $list_of_CCs_and_outgroups | grep -v "CC"`;
+
+for clonal_complex in $clonal_complexes
+do
+
+	echo $clonal_complex
+
+	output_table=$dir"colonising_collections_"$clonal_complex".host_outgroup_reference.csv";
+	input_assemblies=$dir"colonising_collections_samples.assemblies_paths.txt";
+
+	if [ ! -f $output_table ]
+	then
+		echo "Run script identify_host_ancestral_isolate.step1.py to generate "$output_table
+	fi
+
+	outgroups=`awk -F'\t' '{ print $6}' $output_table | grep -v "outgroup_isolate"`;
+
+	for outgroup in $outgroups
+	do
+		# Extract full path to assembly
+		echo $outgroup
+		outgroup_assembly=`awk -v og=$outgroup -F'\t' '{ if($1==og) print $2}' $input_assemblies`;
+		echo $outgroup_assembly
+		# Copying FASTA file
+		cp $outgroup_assembly $vcf_dir$outgroup".fasta"
+	done
+done
+
+
+

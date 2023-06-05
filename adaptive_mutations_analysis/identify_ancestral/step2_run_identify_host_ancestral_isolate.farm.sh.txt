@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -e
+
+dir="/project/directory/identify_ancestral/";
+phy_dir="/project/directory/phylogeny_per_cc/";
+psd_dir="/project/directory/pairwise_snp_distances/";
+
+list_of_CCs_and_outgroups=$phy_dir"outgroup_per_CC.isolate_chosen.edited.csv";
+
+clonal_complexes=`awk -F'\t' '{ print $1}' $list_of_CCs_and_outgroups | grep -v "CC"`;
+
+for clonal_complex in $clonal_complexes
+do
+
+echo $clonal_complex
+root=`awk -v cc=$clonal_complex -F'\t' '{ if($1==cc) print $3}' $list_of_CCs_and_outgroups`;
+
+# First, some taxa (reference genome and outliers) need to be removed from phylogenetic trees
+# Second, phylogenetic trees need to be rooted
+
+original_tree=$phy_dir"RAxML_bipartitions.colonising_collections_"$clonal_complex".EMRSA15.rmMGE.richardson2018_core_genome";
+output_tree=$dir"RAxML_bipartitions.colonising_collections_"$clonal_complex".EMRSA15.rmMGE.richardson2018_core_genome.out";
+taxa_to_remove=$phy_dir"RAxML_bipartitions.colonising_collections.taxa_to_remove.txt";
+# Note: the file RAxML_bipartitions.colonising_collections.taxa_to_remove.txt, contains the reference genome (EMRSA15) and outliers to be removed from trees
+rooted_tree=$dir"RAxML_bipartitions.colonising_collections_"$clonal_complex".EMRSA15.rmMGE.richardson2018_core_genome_rooted";
+
+if [ ! -f $rooted_tree ]
+then
+	python3 remove_taxa_from_tree.py -i $original_tree -t $taxa_to_remove -o $output_tree
+	python3 reroot_phylogenetic_tree.py -i $output_tree -r $root -o $rooted_tree
+	rm $output_tree
+fi
+
+input_phylogeny=$rooted_tree;
+input_distances=$psd_dir"colonising_collections_"$clonal_complex".EMRSA15.rmMGE.richardson2018_core_genome.pairwiseSNPcount.matrix.csv";
+input_metadata=$dir"colonising_pairs_patient-matched_gwas_dataset.CC"$clonal_complex".host_isolate_ids.csv";
+output_table=$dir"colonising_collections_"$clonal_complex".host_outgroup_reference.csv";
+min_snp_distance='5'; # 5 SNPs at the core genome
+
+if [ ! -f $output_table ]
+then
+	python3 identify_host_ancestral_isolate.step1.py --input_phylogeny $input_phylogeny --input_distances $input_distances --input_metadata $input_metadata --output_table $output_table --min_snp_distance $min_snp_distance
+fi
+
+input_assemblies=$dir"colonising_collections_samples.assemblies_paths.txt";
+input_fastq=$dir"colonising_collections_samples.fastq_paths.txt";
+output_bash=$dir"colonising_collections_"$clonal_complex".host_ancestral_isolate.snippy_jobs.sh";
+vcf_dir=$dir"snippy_vcfs/";
+
+if [ ! -f $output_bash ]
+then
+	python3 identify_host_ancestral_isolate.step2.py --input_metadata $input_metadata --output_table $output_table --input_assemblies $input_assemblies --input_fastq $input_fastq --vcf_dir $vcf_dir --output_bash $output_bash
+fi
+
+raxml_dir=$dir"raxml_files/";
+output_table=$dir"colonising_collections_"$clonal_complex".host_outgroup_reference.csv";
+
+python3 identify_host_ancestral_isolate.step3.py --output_table $output_table --vcf_dir $vcf_dir --raxml_dir $raxml_dir --input_assemblies $input_assemblies
+
+python3 identify_host_ancestral_isolate.step4.py --output_table $output_table --vcf_dir $vcf_dir --raxml_dir $raxml_dir --input_assemblies $input_assemblies
+
+
+done
+
+
+
