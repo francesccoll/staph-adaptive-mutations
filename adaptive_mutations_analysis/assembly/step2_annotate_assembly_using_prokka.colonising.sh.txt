@@ -1,0 +1,33 @@
+#!/bin/sh
+
+set -e
+
+samples_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples.txt";
+annotation_dir="/project/directory/prokka/";
+assembly_dir="/project/directory/assembly/";
+
+laSamples=`cat $samples_file | awk -F'\t' '{ print $1}'`;
+
+for sample in $laSamples
+do
+	echo $sample
+
+	# Check if improved assembly file exists
+
+	contigs_file=$assembly_dir$sample".spades.improved.fasta";
+
+	output_dir=$annotation_dir$sample"_prokka/"; # output directory
+
+	gff_file=$output_dir$sample".gff"; # output file
+
+	if [ -f $contigs_file ] 
+	then
+		if [ ! -f $gff_file ]
+		then
+			# Then run prokka
+
+			bsub -q normal -J $sample"_prokka" -o $sample"_prokka.out" -n8 -R "span[hosts=1] select[mem > 5000] rusage[mem=5000]" -M 5000 "prokka --dbdir /nfs/users/nfs_f/fc4/software/prokka/db --outdir $output_dir --prefix $sample $contigs_file"
+
+		fi
+	fi
+done

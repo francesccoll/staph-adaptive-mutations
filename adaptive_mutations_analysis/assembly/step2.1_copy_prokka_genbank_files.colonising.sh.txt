@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# This bash script is used to copy all Prokka GFF files into the same directory
+
+set -e
+
+samples_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples.txt";
+annotation_dir="/project/directory/prokka/";
+gbk_dir="/project/directory/prokka_gbk/";
+
+laSamples=`cat $samples_file | awk -F'\t' '{ print $1}'`;
+
+for sample in $laSamples
+do
+	echo $sample
+
+	output_dir=$annotation_dir$sample"_prokka/"; # output directory
+
+	gbk_file1=$output_dir$sample".gbk"; # output file
+
+	gbk_file2=$gbk_dir$sample".gbk"; # output file
+
+	if [ ! -f $gbk_file2 ]
+	then
+		if [ -f $gbk_file1 ]
+		then
+			cp $gbk_file1 $gbk_file2
+		fi
+	fi
+done
+
+
+
+

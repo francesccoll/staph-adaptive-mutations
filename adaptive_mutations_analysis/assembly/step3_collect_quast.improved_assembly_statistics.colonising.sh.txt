@@ -1,0 +1,12 @@
+
+
+cd /project/directory/assembly/
+
+ls *.spades.improved.quast.csv | grep -f ../colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples.txt | sed 's/.spades.improved.quast.csv//g' > aaa
+
+grep -A 1 "Assembly" *.spades.improved.quast.csv | grep -f ../colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples.txt | grep -v "Assembly" > bbb
+
+paste -d'\t' aaa bbb > colonising_pairs_patient-matched_gwas_dataset.all_pairs.quast_assembly_stats.txt
+
+# the header was manually added
+

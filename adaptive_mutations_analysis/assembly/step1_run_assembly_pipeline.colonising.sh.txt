@@ -1,0 +1,36 @@
+#!/bin/sh
+
+assem_dir="/project/directory/assembly/";
+paths_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.paths.txt";
+samples_file="/project/directory/colonising_pairs_patient-matched_gwas_dataset.all_pairs.samples.txt";
+
+
+# It is important to change directory to where assembly files will be created
+
+cd $assem_dir
+
+laSamples=`cat $samples_file | awk -F'\t' '{ print $1}'`;
+
+for sample in $laSamples
+do
+	echo $sample
+
+	path=`grep $sample$ $paths_file`;
+
+	echo $path
+
+	fastq1=$path"/"$sample"_1.fastq.gz"; fastq2=$path"/"$sample"_2.fastq.gz";
+
+	if [ -f $fastq1 ]
+	then
+		output=$assem_dir$sample".spades.improved.fasta";
+		if [ ! -f $output ]
+		then
+			bsub -q normal -J $sample"_assembly_pipeline" -o $sample"_assembly_pipeline.out" -n16 -R "span[hosts=1] select[mem > 10000] rusage[mem=10000]" -M 10000 "python3 ~/scripts/assembly_pipeline.py -f $fastq1 -r $fastq2"
+		fi
+	else
+		echo $fastq1" could not be found"
+	fi
+done
+
+
