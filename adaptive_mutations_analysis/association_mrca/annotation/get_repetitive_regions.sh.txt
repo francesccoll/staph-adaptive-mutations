@@ -1,0 +1,11 @@
+
+
+
+python3 annotate_repetitive_regions_on_genome.py -g ../snippy_pairs/CC8_NCTC8325.fasta -p CC8_NCTC8325
+
+cat CC8_NCTC8325.repetitive_regions.gbk | grep "repeat" | awk -F':' '{ print $2}' | tr '..' '\t' | tr ')' 'x' | sed 's/x//g' > CC8_NCTC8325.repetitive_regions.tab
+
+
+python3 annotate_repetitive_regions_on_genome.py -g ../../snippy_pairs/CC22_EMRSA15.fasta -p CC22_EMRSA15
+
+cat CC22_EMRSA15.repetitive_regions.gbk | grep "repeat" | awk -F':' '{ print $2}' | tr '..' '\t' | tr ')' 'x' | sed 's/x//g' > CC22_EMRSA15.repetitive_regions.tab

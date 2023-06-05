@@ -1,0 +1,18 @@
+
+
+input_fasta="/project/directory/snippy_pairs/CC8_NCTC8325.fasta";
+output_file="/project/directory/association/low_complexity/CC8_NCTC8325.dustmasker.txt";
+
+dustmasker -in $input_fasta -out $output_file
+
+
+input_fasta="/project/directory/snippy_pairs/CC8_USA300_JE2.fasta";
+output_file="/project/directory/association/low_complexity/CC8_USA300_JE2.dustmasker.txt";
+
+dustmasker -in $input_fasta -out $output_file
+
+
+input_fasta="/project/directory/snippy_pairs/CC22_EMRSA15.fasta";
+output_file="/project/directory/association/low_complexity/CC22_EMRSA15.dustmasker.txt";
+
+dustmasker -in $input_fasta -out $output_file
