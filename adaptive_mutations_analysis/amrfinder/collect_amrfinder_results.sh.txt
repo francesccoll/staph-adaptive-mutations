@@ -1,0 +1,17 @@
+
+
+cd amrfinder_results
+
+find . -type f -empty -print -delete
+
+cat *.amrfinder_output.txt | awk -F'\t' '{ print $12}' | grep -v "Subclass" | sort | uniq | tr '/' '\n' | sort | uniq > ../amrfinder_sau_antibiotics.txt 
+
+cd ..
+
+python3 collect_amrfinder_results.py -a amrfinder_sau_antibiotics.txt -i sau_wh_extended.v1.col.new.metadata.v1.mi.lane_ids.txt -d ./amrfinder_results/ -s .amrfinder_output.txt -p sau_wh_extended.v1.col.new.amrfinder_phenotypes.sau.csv -g sau_wh_extended.v1.col.new.amrfinder_genotypes.sau.csv
+
+
+python3 collect_amrfinder_results.py -a amrfinder_sau_antibiotics.txt -i colonising_pairs_patient-matched_gwas_dataset.all_isolates.isolate_ids.txt -d ./amrfinder_results/ -s .amrfinder_output.txt -p colonising_pairs_patient-matched_gwas_dataset.all_isolates.amrfinder_phenotypes.sau.csv -g colonising_pairs_patient-matched_gwas_dataset.all_isolates.amrfinder_genotypes.sau.csv
+
+
+
