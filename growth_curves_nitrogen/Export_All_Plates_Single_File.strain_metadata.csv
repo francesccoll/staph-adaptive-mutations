@@ -1,0 +1,11 @@
+strain_id	isolate_id	patient_id	mutation	gene	type
+58870	9716_3#67	mpros-194	p.Cys452Ser	nasD	mutant
+74975	14324_8#72	mpros-194	p.Cys452Ser	nasD	wildtype
+80131	8525_1#72	mpros-381	p.Thr656Ile	nasD	mutant
+144398	14208_8#20	mpros-381	p.Thr656Ile	nasD	wildtype
+146083	14324_8#22	mpros-547	p.Glu246Gln	nasD	mutant
+103356	14200_8#21	mpros-547	p.Glu246Gln	nasD	wildtype
+JE2	JE2	none	none	none	knockout
+NE1113	NE1113	none	knockout	ureG	knockout
+NE286	NE286	none	knockout	spa	knockout
+NE857	NE857	none	knockout	nasD	knockout
