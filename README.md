@@ -15,12 +15,11 @@ This GitHub project contains the data and code necessary to reproduce the findin
     - mapping_mrca: pipeline used to identify *de novo* mutations arising in each host clonal strain.
   * applied to all hosts
     - association_mrca: R scripts used to filter *de novo* mutations per host clonal strain and to identify functional units with an excess of protein-altering mutations.
-
-* agr_mutants: 
-* data: directory with XXXX
-* genetic_diversity: directory with XXXX
-* growth_curves: directory with XXXX
-* growth_curves_nitrogen: directory with XXXX
+* agr_mutants: R script is used to calculate agr-mutant frequencies in different subsets of patients and to test the effect of several variables on the emergence of agr mutants.
+* data: directory with input data files used by scripts in this GitHub project.
+* genetic_diversity: scripts to summarise within-host genetic diversity.
+* growth_curves: growth curves data of knockout strains and natural mutants grown under sub-inhibitory concentrations of daptomycin, and R script used to analyse this data.
+* growth_curves_nitrogen: growth curves data of transposon knockout strains and natural mutants grown under multiple nitrogen sources in Biolog PM3 plates, and R script used to analyse this data.
 
 # Citation
 Coll F, Blane B, Bellis K, *et al.* The mutational landscape of *Staphylococcus aureus* during colonisation. *Nature Communications* (accepted). 2024. 
