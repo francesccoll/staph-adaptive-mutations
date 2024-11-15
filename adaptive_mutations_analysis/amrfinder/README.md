@@ -1,1 +1,1 @@
-Files and script used to run AMRFinderPlus on *S. aureus* assemblies
+Files and scripts used to run AMRFinderPlus from *S. aureus* assemblies
