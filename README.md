@@ -22,5 +22,4 @@ This GitHub project contains the data and code necessary to reproduce the findin
 * growth_curves_nitrogen: growth curves data of transposon knockout strains and natural mutants grown under multiple nitrogen sources in Biolog PM3 plates, and R script used to analyse this data.
 
 # Citation
-Coll F, Blane B, Bellis K, *et al.* The mutational landscape of *Staphylococcus aureus* during colonisation. *Nature Communications* (accepted). 2024. 
-Previous BioRxiv version available here: https://www.biorxiv.org/content/10.1101/2023.12.08.570284v1
+Coll F, Blane B, Bellis KL, *et al.* The mutational landscape of *Staphylococcus aureus* during colonisation. *Nature Communications*. 2025;16(1):302. doi:10.1038/s41467-024-55186-x
